@@ -1,9 +1,3 @@
-# Check for FactoMineR library and require it 
-# https://stackoverflow.com/questions/9341635/check-for-installed-packages-before-running-install-packages
-if (!'FactoMineR' %in% installed.packages())
-  install.packages('FactoMineR')
-require('FactoMineR')
-
 # Test whether running under RStudio 
 # <3 https://stackoverflow.com/questions/12389158/check-if-r-is-running-in-rstudio
 isRStudio <- Sys.getenv("RSTUDIO") == "1"
@@ -31,55 +25,22 @@ setwd(current_dir)
 # Check visually if this is correct
 getwd()
 
-# Le os dados
-#dados <- read.csv("enem2016_1000linhas.csv", sep = ";")
+# Read Microdados
+dados <- read.table('microdados_enem2016_semNA_16attr.data', sep=',')
 
-# Check if sqldf is currently installed 
+# Check if DMwR is currently installed 
 # https://stackoverflow.com/questions/9341635/check-for-installed-packages-before-running-install-packages
-if (!'sqldf' %in% installed.packages())
-  install.packages('sqldf')
+if (!'DMwR' %in% installed.packages())
+  install.packages('DMwR')
+require('DMwR')
 
-# Filter by 'UF' (Unidade da Federação)
-# <3 https://stackoverflow.com/questions/41067275/filter-by-column-values-while-reading-using-read-csv-in-r
-require(sqldf)
+# Check if DMwR is currently installed 
+# https://stackoverflow.com/questions/9341635/check-for-installed-packages-before-running-install-packages
+if (!'caret' %in% installed.packages())
+  install.packages('caret')
+require('caret')
 
-# Microdados Enem file
-url_file <- "/home/jeferson/Trabalhos/Microdados_enem_2016/DADOS/microdados_enem2016_utf8.csv"
-
-# SQL Query
-filtra_bahia <- "select * from file where SG_UF_PROVA = 'BA'"
-
-# As our data is enormous read csv in chunks
-# <3 https://stackoverflow.com/questions/23197243/how-do-i-read-only-lines-that-fulfil-a-condition-from-a-csv-into-r
-
-# Maximum number of rows 
-max_rows <- 2
-
-# Number of lines
-microdados_lines <- 8627368
-
-# Number of iterations 
-# PS.: We remove the first iteration since this is executed 
-number_interations <- ceiling(microdados_lines / max_rows) - 1
-
-# Database read first chunk
-# nota_enem_bahia <- read.csv.sql(url_file, filtra_bahia, nrows = max_rows, sep=";")
-
-# Read chunks and add the selected chunks to final file
-for (i in 1:number_interations){
-  # Display iteration number
-  cat("Lines read -> ", (i * max_rows))
-  
-  # 
-  temp <- read.csv('big_file.csv', skip=i*100+1, nrow=100, header=FALSE,
-                   stringsAsFactors=FALSE)
-  
-  temp <- temp[temp$Variable2 >= 3, ]
-  final.df[(last.row+1):(last.row+nrow(temp)), ] <- temp
-  last.row <- last.row + nrow(temp)    ## increment the current count
-}
-
-################# Início Funções #################
+################# Inicio Funções #################
 
 transformacao <- function(dataset){
   for(i in seq_along(dataset)){
@@ -173,12 +134,13 @@ removeOutliers <- function(dataSet){
     attrSemNa <- dataSet[, i][!is.na(dataSet[, i])]
     
     # Boxplot antes de remover os Outliers
+    png(filename = paste(toString(names(dataSet[i])), ".png") )
     boxplot(attrSemNa)
+    dev.off()
     
     dataSet <- dataSet[!attrSemNa %in% boxplot.stats(attrSemNa)$out, ]
     
-    # Boxplot depois de remover os Outliers
-    boxplot(dataSet[, i])
+    boxplot(attrSemNa)
     
     #print(i)
   }
@@ -193,73 +155,51 @@ removeOutliers <- function(dataSet){
 }
 
 normalizar <- function(dataSet){
-  
+  attrs <- c()
   for(i in seq_along(dataSet[, -c(ncol(dataSet))])){
     attrSemNA <- dataSet[, i][!is.na(dataSet[, i])]
     minValue <- min(attrSemNA)
-    
     #print(minValue)
     maxValue <- max(attrSemNA)
-    
     #print(maxValue)
     if(maxValue - minValue != 0){
       normAttr <- (attrSemNA - minValue) / (maxValue - minValue)
       
       dataSet[, i] <- normAttr
       cat("Normalizado: ", i, "\n")
-    }else{  
-      # Remover atributo que tem valor único
-      dataSet[, -c(i)]
-      cat("Removido: ", i, "\n")
-      i <- i - 1
+    }else{
+      attrs <- c(attrs, i)
     }
   }
+  print(attrs)
+  dataSet <- dataSet[ , -c(attrs)]
   return(dataSet)
 }
 
-################# Fim Funções #################
-
-# 6 - SG_UF_RESIDENCIA
-# 7 - NU_IDADE
-# 8 - TP_SEXO
-# 9 - TP_ESTADO_CIVIL
-# 10 - TP_COR_RACA
-# 11 - TP_NACIONALIDADE
-# 16 - TP_ST_CONCLUSAO
-# 18 - TP_ESCOLA (é necessário?)  [RETIRADO]
-# 19 - TP_ENSINO (é necessário?)
-# 20 - IN_TREINEIRO
-# 97 - NU_NOTA_CN
-# 98 - NU_NOTA_CH
-# 99 - NU_NOTA_LC
-# 100 - NU_NOTA_MT
-# 122 - Q006
-# 163 - Q047 (é necessário?) (Em que tipo de escola você frequentou o Ensino Médio?)
-# 116 - NU_NOTA_REDACAO (classe)
-
-atributos.selecionados <- c(6, 7, 8, 9, 10, 11, 16, 19, 20, 97, 98, 99, 100, 122, 163, 116)
-
-dados <- dados[, atributos.selecionados]
-
-# Transformação dos valores nominais categóricos para númericos categóricos
-
+dados <- dados[which(dados$V1 == "BA"), ]
+dados <- dados[,-c(1)]
 dados <- transformacao(dados)
-
-# Remoção de valores ausentes (NAs)
-
-dados <- removeNA(dados)
-
-# Remoção de Outliers
-
-#tmp <- removeOutliers(dados) # Verificar se existem realmente Outliers
-#dados <- tmp
-
-# Normalização dos Atributos
-
 dados <- normalizar(dados)
-dados
+dados <- dados[order(dados$V16),]
 
-# Salvando base de dados pré-processada
+## Split in train + test set
+idxs <- sample(1:nrow(dados),as.integer(0.7*nrow(dados)))
+trainDados <- dados[idxs,]
+testDados <- dados[-idxs,]
 
-write.table(dados, file = "microdados_enem2016_16attr.data", sep = ",")
+## A 3-nearest neighbours model with no normalization
+nn3 <- kNN(V16 ~ ., trainDados, testDados, norm=TRUE, k=3)
 
+## The resulting confusion matrix
+table(testDados[,'V16'],nn3)
+
+# Get Result
+matrix_confusion <- as.matrix(table(Actual = testDados[,'V16'], Predicted = nn3))
+result <- confusionMatrix(testDados[,'V16'], nn3)
+print(result)
+
+## Now a 5-nearest neighbours model with normalization
+nn5 <- kNN(V16 ~ ., trainDados, testDados, norm=TRUE, k=5)
+
+## The resulting confusion matrix
+table(testDados[,'V16'],nn5)
