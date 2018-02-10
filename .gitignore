@@ -1,9 +1,9 @@
+# Ignore everything in Dados folder since those are downloaded files
+projeto/dados/*
+
 # Don't ignore those files and folders
 !.keep_folder
 !projeto/dados/.keep_folder
-
-# Ignore everything in Dados folder since those are downloaded files
-projeto/dados/*
 
 #### --------------------------- ####
 
