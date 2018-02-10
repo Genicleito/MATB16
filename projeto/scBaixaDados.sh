@@ -12,7 +12,7 @@
 LINK_MICRODADOS_ENEM="http://download.inep.gov.br/microdados/microdados_enem2016.zip"
 
 # Nome do arquivo final
-OUTPUT_FILE="dados.zip"
+OUTPUT_FILE="dados/dados.zip"
 
 # Download com continuação para possíveis paradas
 echo "Iniciando o download da base de dados"

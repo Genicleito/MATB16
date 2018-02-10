@@ -5,8 +5,16 @@
 
 # Nome do arquivo
 # <3 https://stackoverflow.com/questions/13055889/sed-with-literal-string-not-input-file
-ARQUIVO="microdados_enem_2016.csv"
+ARQUIVO="dados/Microdados_enem_2016/DADOS/microdados_enem_2016.csv"
 ARQUIVO_FINAL=$(echo "$ARQUIVO" | sed -n "s/\./_utf8\./p")
+
+# Checa pelo arquivo resultante e para execução caso não exista
+# <3 https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
+if [ ! -f $ARQUIVO ]; then
+    echo "Arquivo $ARQUIVO não existe"
+    echo "Abortando a execução"
+    exit
+fi
 
 # Converte de ISO-8859-1 para UTF8
 echo "Convertendo ISO-8859 para UTF8"

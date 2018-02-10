@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Arquivo a ser cortado
-export ARQUIVO_CORTE="microdados_enem_2016_utf8.csv"
+export ARQUIVO_CORTE="dados/Microdados_enem_2016/DADOS/microdados_enem_2016_utf8.csv"
 # export ARQUIVO_CORTE="haha.csv" ; teste
 
 # Prefixo do arquivo resultante
@@ -11,7 +11,7 @@ PREFIXO_RESULTANTE="$(echo "$ARQUIVO_CORTE" | cut -d '.' -f 1)_"
 SUFIXO_RESULTANTE=".$(echo "$ARQUIVO_CORTE" | cut -d '.' -f 2)"
 
 # Pasta resultante
-PASTA_RESULTANTE="partes"
+PASTA_RESULTANTE="dados/partes"
 
 # Funcao cabecalho
 export CABECALHO_CSV=$(head -n 1 "$ARQUIVO_CORTE")
@@ -20,6 +20,14 @@ CABECALHO='tee > "$FILE" ; sed -i "1i$CABECALHO_CSV" "$FILE"'
 # Especificar número de cortes, isso será utilizado para cortar o arquivo em diversas partes
 # E.G. 100 partes = 5GB / 100 => 50 MB
 N_CORTES=100
+
+# Checa pelo arquivo resultante e para execução caso não exista
+# <3 https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
+if [ ! -f $ARQUIVO_CORTE ]; then
+    echo "Arquivo $ARQUIVO_CORTE não existe"
+    echo "Abortando a execução"
+    exit
+fi
 
 # Corta o arquivo no número de partes especificadas
 # <3 https://stackoverflow.com/questions/793858/how-to-mkdir-only-if-a-dir-does-not-already-exist
@@ -41,4 +49,4 @@ split 	--verbose \
 	"$ARQUIVO_CORTE" \
 	"$PASTA_RESULTANTE/$PREFIXO_RESULTANTE"
 sed -i -e '1d' "$PASTA_RESULTANTE/${PREFIXO_RESULTANTE}00$SUFIXO_RESULTANTE"
-echo "Arquivo finalizado resultado em $PASTA_RESULTANTE"
+echo "Arquivo finalizado resultado na pasta $PASTA_RESULTANTE"

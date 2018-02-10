@@ -3,7 +3,6 @@
 
 # Ignore everything in Dados folder since those are downloaded files
 projeto/dados/*
-projeto/dados.*
 
 #### --------------------------- ####
 
