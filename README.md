@@ -1,5 +1,4 @@
 # MATB16 - AM para Microdadados INEP
----
 Códigos da Disciplina MATB16 - 2017.2
 
 ## Sobre
