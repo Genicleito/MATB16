@@ -57,8 +57,12 @@ if (!'sqldf' %in% installed.packages())
 require(sqldf)
 
 # Microdados Enem file
-urlFilePrefix <- "/home/jeferson/Trabalhos/Microdados_enem_2016/DADOS/partes/microdados_enem_2016_utf8_"
+urlFilePrefix <- "dados/partes/microdados_enem_2016_utf8_"
 urlFileSuffix <- ".csv"
+
+# Microdados Enem file
+urlOutFilePrefix <- "dados/"
+urlOutFileSuffix <- ".csv"
 
 # Numero de interações
 numberInterations <- 100
@@ -308,7 +312,7 @@ for (i in 0:(numberInterations - 1)){
 
 # Store CSV parsed and repaired to a single new file
 # <3 http://rprogramming.net/write-csv-in-r/
-outputFilename <- paste(urlFilePrefix, 'out1', urlFileSuffix, sep = '')
+outputFilename <- paste(urlOutFilePrefix, 'out1', urlFileOutSuffix, sep = '')
 write.csv(datasetCsv, file = outputFilename, row.names = FALSE)
 
 
@@ -383,7 +387,7 @@ usedResponses <- c(
 
 # Store CSV parsed with removed unused columns 
 # <3 http://rprogramming.net/write-csv-in-r/
-outputFilename <- paste(urlFilePrefix, 'out2', urlFileSuffix, sep = '')
+outputFilename <- paste(urlFileOutPrefix, 'out2', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvFiltered, file = outputFilename, row.names = FALSE)
 
 # Remove people that hadn't done the test or had a problem on essay
@@ -440,7 +444,7 @@ removedCols <- c(
 
 # Store CSV parsed with removed constant columns
 # <3 http://rprogramming.net/write-csv-in-r/
-outputFilename <- paste(urlFilePrefix, 'out3', urlFileSuffix, sep = '')
+outputFilename <- paste(urlFileOutPrefix, 'out3', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvFiltered, file = outputFilename, row.names = FALSE)
 
 # Check for the presence of NA in our data frame
@@ -512,7 +516,7 @@ for(propertyName in names(datasetClasses)[which(names(datasetClasses) %ni% remov
 
 # Store Final CSV after normalized data
 # <3 http://rprogramming.net/write-csv-in-r/
-outputFilename <- paste(urlFilePrefix, 'final', urlFileSuffix, sep = '')
+outputFilename <- paste(urlFileOutPrefix, 'final', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvNormalized, file = outputFilename, row.names = FALSE)
 
 # Produce a only numeric data table
