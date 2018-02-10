@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Pasta com os datasets
+export PASTA_CORTE="dados/Microdados_enem_2016/DADOS"
+
 # Arquivo a ser cortado
-export ARQUIVO_CORTE="dados/Microdados_enem_2016/DADOS/microdados_enem_2016_utf8.csv"
+export ARQUIVO_CORTE="microdados_enem_2016_utf8.csv"
 # export ARQUIVO_CORTE="haha.csv" ; teste
 
 # Prefixo do arquivo resultante
@@ -14,7 +17,7 @@ SUFIXO_RESULTANTE=".$(echo "$ARQUIVO_CORTE" | cut -d '.' -f 2)"
 PASTA_RESULTANTE="dados/partes"
 
 # Funcao cabecalho
-export CABECALHO_CSV=$(head -n 1 "$ARQUIVO_CORTE")
+export CABECALHO_CSV=$(head -n 1 "$PASTA_CORTE/$ARQUIVO_CORTE")
 CABECALHO='tee > "$FILE" ; sed -i "1i$CABECALHO_CSV" "$FILE"'
 
 # Especificar número de cortes, isso será utilizado para cortar o arquivo em diversas partes
@@ -23,7 +26,7 @@ N_CORTES=100
 
 # Checa pelo arquivo resultante e para execução caso não exista
 # <3 https://stackoverflow.com/questions/638975/how-do-i-tell-if-a-regular-file-does-not-exist-in-bash
-if [ ! -f $ARQUIVO_CORTE ]; then
+if [ ! -f "$PASTA_CORTE/$ARQUIVO_CORTE" ]; then
     echo "Arquivo $ARQUIVO_CORTE não existe"
     echo "Abortando a execução"
     exit
@@ -44,9 +47,8 @@ split 	--verbose \
 	--filter "$CABECALHO" \
 	--number "l/$N_CORTES" \
 	--numeric-suffixes \
-	--additional-suffix \
-	"$SUFIXO_RESULTANTE" \
-	"$ARQUIVO_CORTE" \
+	--additional-suffix "$SUFIXO_RESULTANTE" \
+	"$PASTA_CORTE/$ARQUIVO_CORTE" \
 	"$PASTA_RESULTANTE/$PREFIXO_RESULTANTE"
 sed -i -e '1d' "$PASTA_RESULTANTE/${PREFIXO_RESULTANTE}00$SUFIXO_RESULTANTE"
 echo "Arquivo finalizado resultado na pasta $PASTA_RESULTANTE"
