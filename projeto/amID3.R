@@ -115,6 +115,13 @@ predict_ID3 <- function(test_obs, id3_tree) {
   apply(test_obs, 1, traverse, work_tree=id3_tree)
 }
 
+# Utility functions: REFACTOR ALL BELOW TO COMMON BASE
+# Reports the most frequent factor
+# Code taken from: http://stackoverflow.com/a/8189441/2985170
+most.frq <- function(nbr.class, nbr.distance) {
+  uniq <- unique(nbr.class)
+  uniq[which.max(tabulate(match(nbr.class, uniq)))]
+}
 
 ########### ##################### ###########
 ########### END OF PSEUDO LIBRARY ###########
@@ -172,16 +179,37 @@ for (i in 1:kFoldN) {
   indices <- (((i-1) * round((1/kFoldN)*nrow(iris))) + 1):((i*round((1/kFoldN) * nrow(iris))))
   
   # Exclude them from the train set
-  trainDataset <- iris[-indices,]
+  trainDataset <- datasetCsvFactor[-indices,]
   # Include them in the test set
-  testDataset <- iris[indices,]
+  testDataset <- datasetCsvFactor[indices,]
   
   # Construct the Decision tree using the train dataset
   decision.tree <- ID3(trainDataset, 'NU_NOTA_REDACAO')
   
   # Test against test dataset ....
-  # ..... make this 
+  if(exists("resultTestDataset"))
+    rm(resultTestDataset)
+  for(j in 1:nrow(testDataset)){
+    # Predict value using data
+    resultTestData <- predict_ID3(testDataset[j,], decision.tree)
+    
+    # Append this result to result
+    if(exists("resultTestDataset"))
+      resultTestDataset <- append(resultTestDataset, resultTestData)
+    else
+      resultTestDataset <- c(resultTestData)
+  }
+    
+  # Absolute mean error
+  meanAbsoluteError <- abs(mean(resultTestDataset) -
+                             mean(testDataset$NU_NOTA_REDACAO))
+  
+  # Print result
+  cat('Absolute mean error', meanAbsoluteError)
 }
+
+# Predict some data
+predict_ID3(datasetCsvFactor[1,], decision.tree)
 
 # Plot results
 # .......
