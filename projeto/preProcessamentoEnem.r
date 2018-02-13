@@ -524,7 +524,7 @@ write.csv(datasetCsvNormalized, file = outputFilename, row.names = FALSE)
 # Since normalized data don't have the exact result value we store the
 # max and the min of result to after recover the aproximate value
 datasetResultConstraint <- c('MaxRes' = max(datasetCsvFiltered$NU_NOTA_REDACAO),
-                             'MinRes' = datasetCsvFiltered$NU_NOTA_REDACAO)
+                             'MinRes' = min(datasetCsvFiltered$NU_NOTA_REDACAO))
 outputFilename <- paste(urlFileOutPrefix, 'constraints', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvNormalized, file = outputFilename, row.names = FALSE)
 
