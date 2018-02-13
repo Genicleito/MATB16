@@ -61,8 +61,8 @@ urlFilePrefix <- "dados/partes/microdados_enem_2016_utf8_"
 urlFileSuffix <- ".csv"
 
 # Microdados Enem file
-urlOutFilePrefix <- "dados/"
-urlOutFileSuffix <- ".csv"
+urlFileOutPrefix <- "dados/result_"
+urlFileOutSuffix <- ".csv"
 
 # Numero de interações
 numberInterations <- 100
@@ -316,7 +316,9 @@ outputFilename <- paste(urlOutFilePrefix, 'out1', urlFileOutSuffix, sep = '')
 write.csv(datasetCsv, file = outputFilename, row.names = FALSE)
 
 
+
 ################ PRE PROCCESSING ################
+
 
 
 # Make a copy of the dataset read
@@ -465,8 +467,8 @@ for(csvCol in names(datasetCsvFiltered)){
   # Print presence of Null's and NA's
   if(csvColNullCounter > 0){
     cat("Column -", csvCol, "has", csvColNullCounter, "null\n")
-    if(exists("columnsWithNull")){
-      columnsWithNull <- append(columnsWithNull, csvCol)    }
+    if(exists("columnsWithNull"))
+      columnsWithNull <- append(columnsWithNull, csvCol)
     else
       columnsWithNull <- c(csvCol)
   }
@@ -497,7 +499,7 @@ for(propertyName in names(datasetClasses)[which(names(datasetClasses) %ni% remov
   # If it's numeric col
   if(datasetClasses[propertyName] == "numeric"){
     cat("Normalizing col -", propertyName, "\n")
-    cat("Col", property_name, "Type ->", class(datasetCsvNormalized[, propertyName]), "\n")
+    cat("Col", propertyName, "Type ->", class(datasetCsvNormalized[, propertyName]), "\n")
     
     # Get max and min values of this col
     maxValueCol <- max(datasetCsvNormalized[, propertyName])
@@ -527,7 +529,7 @@ for(propertyName in names(datasetClasses)[which(names(datasetClasses) %ni% remov
   if(datasetClasses[propertyName] != "numeric" &&
      datasetClasses[propertyName] != "character"){
     cat("Converting col -", propertyName, "to numeric\n")
-    cat("Col", property_name, "Type ->", class(datasetCsvNormalized[, propertyName]), "\n")
+    cat("Col", propertyName, "Type ->", class(datasetCsvNumeric[, propertyName]), "\n")
     
     # Convert this col to numeric
     datasetCsvNumeric[,propertyName] <- as.numeric(datasetCsvNumeric[,propertyName])
@@ -540,7 +542,74 @@ datasetCsvNumeric <- subset(datasetCsvNumeric, select = -c(
   NO_MUNICIPIO_PROVA
 ))
 
+# Store Numeric CSV after normalized data
+# <3 http://rprogramming.net/write-csv-in-r/
+outputFilename <- paste(urlFileOutPrefix, 'numeric', urlFileOutSuffix, sep = '')
+write.csv(datasetCsvNumeric, file = outputFilename, row.names = FALSE)
 
+# Normalize all colums with numeric data again (this is to ensure the range of 0 .. 1)
+datasetCsvNumericNormalized <- datasetCsvNumeric
+for(propertyName in names(datasetClasses)[which(names(datasetClasses) %in% names(datasetCsvNumeric))]){
+  
+  # If it's numeric col
+  if(max(datasetCsvNumericNormalized[propertyName]) > 1){
+    cat("Normalizing col -", propertyName, 'with range',
+        min(datasetCsvNumericNormalized[propertyName]), '-',
+        max(datasetCsvNumericNormalized[propertyName]), "\n")
+    cat("Col", propertyName, "Type ->", class(datasetCsvNumericNormalized[, propertyName]), "\n")
+    
+    # Get max and min values of this col
+    maxValueCol <- max(datasetCsvNumericNormalized[, propertyName])
+    minValueCol <- min(datasetCsvNumericNormalized[, propertyName])
+    
+    # Check if the value is not constant
+    if(maxValueCol - minValueCol != 0){
+      datasetCsvNumericNormalized[, propertyName] <-
+        (datasetCsvNumericNormalized[, propertyName] - minValueCol) / abs(maxValueCol - minValueCol)
+    }
+    else{
+      cat("Column", propertyName, "is constant\n")
+    }
+  }
+}
+
+# Store Numeric CSV Normalized
+# <3 http://rprogramming.net/write-csv-in-r/
+outputFilename <- paste(urlFileOutPrefix, 'numeric-normalized', urlFileOutSuffix, sep = '')
+write.csv(datasetCsvNumericNormalized, file = outputFilename, row.names = FALSE)
+
+# This dataset has no numeric data, only factors
+datasetCsvFactor <- datasetCsvNormalized
+
+# Select only factors which is on database
+if(exists("nonFactorCols"))
+  rm(nonFactorCols)
+for(csvCol in names(datasetClasses)){
+  
+  # Delete properties whose aren't factor
+  if(csvCol != 'NU_NOTA_REDACAO' &&
+     datasetClasses[csvCol] != 'factor' &&
+     csvCol %in% names(datasetCsvFactor)){
+      cat('Deleting property -', csvCol,'\n')
+      if(exists("nonFactorCols"))
+        nonFactorCols <- append(nonFactorCols, csvCol)
+      else
+        nonFactorCols <- c(csvCol)
+  }
+}
+
+# Remove columns which isn't factors
+datasetCsvFactor <- subset(datasetCsvFactor,select = names(datasetCsvFactor) %ni% nonFactorCols)
+
+# Change content of response to factor with two digits
+nDigitsFactorResult <- 2
+datasetCsvNormalized$NU_NOTA_REDACAO <- factor(round(datasetCsvNormalized$NU_NOTA_REDACAO,
+                                                     digits = nDigitsFactorResult))
+
+# Store Numeric CSV after normalized data
+# <3 http://rprogramming.net/write-csv-in-r/
+outputFilename <- paste(urlFileOutPrefix, 'factor', urlFileOutSuffix, sep = '')
+write.csv(datasetCsvFactor, file = outputFilename, row.names = FALSE)
 
 
 
