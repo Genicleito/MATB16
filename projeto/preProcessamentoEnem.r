@@ -488,7 +488,7 @@ removedCols <- append(removedCols, columnsWithNull)
 #cat("NA founds in table >", naCounter, "\n")
 
 # OBSOLETE! Check for presence of NULL
-#nullCounterTable <- apply(datasetCsvFiltered, 2, function(x) sum(x, is.null(x) || x == ''))
+#nullCounterTable <- apply(datasetCsvFiltered, 2, function(x) sum(is.null(x) || x == ''))
 #nullCounter <- sum(nullCounterTable)
 #cat("Null founds in table >", nullCounter, "\n")
 
@@ -610,7 +610,7 @@ datasetCsvFactor <- subset(datasetCsvFactor,select = names(datasetCsvFactor) %ni
 
 # Change content of response to factor with two digits
 nDigitsFactorResult <- 2
-datasetCsvNormalized$NU_NOTA_REDACAO <- factor(round(datasetCsvNormalized$NU_NOTA_REDACAO,
+datasetCsvFactor$NU_NOTA_REDACAO <- factor(round(datasetCsvNormalized$NU_NOTA_REDACAO,
                                                      digits = nDigitsFactorResult))
 
 # Store Numeric CSV after normalized data
