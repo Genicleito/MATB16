@@ -521,6 +521,13 @@ for(propertyName in names(datasetClasses)[which(names(datasetClasses) %ni% remov
 outputFilename <- paste(urlFileOutPrefix, 'final', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvNormalized, file = outputFilename, row.names = FALSE)
 
+# Since normalized data don't have the exact result value we store the
+# max and the min of result to after recover the aproximate value
+datasetResultConstraint <- c('MaxRes' = max(datasetCsvFiltered$NU_NOTA_REDACAO),
+                             'MinRes' = datasetCsvFiltered$NU_NOTA_REDACAO)
+outputFilename <- paste(urlFileOutPrefix, 'constraints', urlFileOutSuffix, sep = '')
+write.csv(datasetCsvNormalized, file = outputFilename, row.names = FALSE)
+
 # Produce a only numeric data table
 datasetCsvNumeric <- datasetCsvNormalized
 for(propertyName in names(datasetClasses)[which(names(datasetClasses) %ni% removedCols)]){
@@ -575,7 +582,7 @@ for(propertyName in names(datasetClasses)[which(names(datasetClasses) %in% names
 
 # Store Numeric CSV Normalized
 # <3 http://rprogramming.net/write-csv-in-r/
-outputFilename <- paste(urlFileOutPrefix, 'numeric-normalized', urlFileOutSuffix, sep = '')
+outputFilename <- paste(urlFileOutPrefix, 'numeric_normalized', urlFileOutSuffix, sep = '')
 write.csv(datasetCsvNumericNormalized, file = outputFilename, row.names = FALSE)
 
 # This dataset has no numeric data, only factors
@@ -700,3 +707,8 @@ boxplot(datasetCsvFiltered$NU_IDADE,
         main = "Idade dos candidatos",
         ylab = "Anos")
 
+# Age of candidates without ages greater than the outliners
+maxRegularAge <- max(boxplot.stats(datasetCsvFiltered$NU_IDADE)$stats)
+boxplot(datasetCsvFiltered$NU_IDADE[which(datasetCsvFiltered$NU_IDADE <= maxRegularAge)],
+        main = "Idade dos candidatos",
+        ylab = "Anos")
