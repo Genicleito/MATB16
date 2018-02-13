@@ -44,9 +44,6 @@ setwd(currentDir)
 # Check visually if this is correct
 getwd()
 
-# Le os dados
-#dados <- read.csv("enem2016_1000linhas.csv", sep = ";")
-
 # Check if sqldf is currently installed 
 # https://stackoverflow.com/questions/9341635/check-for-installed-packages-before-running-install-packages
 if (!'sqldf' %in% installed.packages())

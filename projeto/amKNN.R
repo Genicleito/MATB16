@@ -49,5 +49,5 @@ trainDataset <- datasetCsvNumericNormalized[trainIds,]
 testDataset <- datasetCsvNumericNormalized[-trainIds,]
 
 # A 3-nearest neighbour model with normalization
-nn3 <- kNN(NU_NOTA_REDACAO ~ ., trainDataset, testDataset, norm = FALSE, k = 3)
+nn3 <- kNN(NU_NOTA_REDACAO ~ ., trainDataset, testDataset, norm = TRUE, k = 3)
 
