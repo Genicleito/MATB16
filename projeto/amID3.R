@@ -201,11 +201,11 @@ for (i in 1:kFoldN) {
   }
     
   # Absolute mean error
-  meanAbsoluteError <- abs(mean(resultTestDataset) -
+  meanAbsoluteError <- abs(mean(as.numeric(resultTestDataset)) -
                              mean(testDataset$NU_NOTA_REDACAO))
   
   # Print result
-  cat('Absolute mean error', meanAbsoluteError)
+  cat('Absolute mean error', meanAbsoluteError, '\n')
 }
 
 # Predict some data

@@ -677,9 +677,7 @@ candidatesSexGraph <- plotBargraph(candidatesSexSummary,
 candidatesStateSummary <- summary(datasetCsvFiltered$SG_UF_RESIDENCIA)
 candidatesSexGraph <- plotBargraph(candidatesStateSummary,
                                    "Candidatos por estado",
-                                   c("red", "brown", "purple", "violet",
-                                     "darkgreen", "green", "orange",
-                                     "chocolate1", "blue"),
+                                   rainbow(20),
                                    c("AL", "BA", "CE", "MA", "PB", "PE",
                                      "PI", "RN", "SE"),
                                    "Estado",
@@ -709,3 +707,45 @@ maxRegularAge <- max(boxplot.stats(datasetCsvFiltered$NU_IDADE)$stats)
 boxplot(datasetCsvFiltered$NU_IDADE[which(datasetCsvFiltered$NU_IDADE <= maxRegularAge)],
         main = "Idade dos candidatos",
         ylab = "Anos")
+        
+# Histogram of Idade
+hist(datasetCsvFiltered$NU_IDADE,
+     col= rainbow(20),
+     main = "Histograma da idade usuarios",
+     xlab = "Idade",
+     ylab = "Frequência")
+
+# Histogram of essay grades 
+hist(datasetCsvFiltered$NU_NOTA_REDACAO,
+     col= rainbow(20),
+     main = "Histograma da nota redação",
+     xlab = "Nota",
+     ylab = "Frequência")
+
+# Histogram of test 'Matemática'
+hist(datasetCsvFiltered$NU_NOTA_MT,
+     col= rainbow(20),
+     main = "Histograma da prova Matemática",
+     xlab = "Nota",
+     ylab = "Frequência")
+
+# Histogram of test 'Linguagens e códigos'
+hist(datasetCsvFiltered$NU_NOTA_LC,
+     col= rainbow(20),
+     main = "Histograma da prova Linguagens e Código",
+     xlab = "Nota",
+     ylab = "Frequência")
+
+# Histogram of test 'Linguagens e códigos'
+hist(datasetCsvFiltered$NU_NOTA_CN,
+     col= rainbow(20),
+     main = "Histograma da prova Ciências da Natureza",
+     xlab = "Nota",
+     ylab = "Frequência")
+
+# Histogram of test 'Linguagens e códigos'
+hist(datasetCsvFiltered$NU_NOTA_CH,
+     col= rainbow(20),
+     main = "Histograma da prova Ciências Humanas",
+     xlab = "Nota",
+     ylab = "Frequência")

@@ -48,6 +48,10 @@ trainDataset <- datasetCsvNumericNormalized[trainIds,]
 # Test dataset
 testDataset <- datasetCsvNumericNormalized[-trainIds,]
 
+# Remove missing values
+testDataset <- na.omit(testDataset)
+trainDataset <- na.omit(trainDataset)
+
 # A 3-nearest neighbour model with normalization
 nn3 <- kNN(NU_NOTA_REDACAO ~ ., trainDataset, testDataset, norm = TRUE, k = 3)
 
