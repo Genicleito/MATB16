@@ -1,4 +1,4 @@
-# MATB16 - AM para Microdadados INEP
+# MATB16 - Aprendizado de Máquina para Microdadados INEP
 Material da Disciplina LABORATÓRIO DE INTELIGÊNCIA ARTIFICIAL - 2017.2
 
 ## Sobre
