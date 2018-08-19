@@ -1,10 +1,10 @@
 # MATB16 - AM para Microdadados INEP
-Códigos da Disciplina MATB16 - 2017.2
+Material da Disciplina LABORATÓRIO DE INTELIGÊNCIA ARTIFICIAL - 2017.2
 
 ## Sobre
 
-Este repositório visa estudar técnicas de aprendizado de máquinas sobre os dados
-providenciados pelo INEP.
+Este repositório visa estudar técnicas de aprendizado de máquina sobre os dados
+disponibilizados pelo INEP referentes ao ENEM 2017.
 
 O objeto inicial desta pesquisa foi o de tentar predizer a nota de redação no ENEM
 dos candidadtos de 2016, utilizando técnicas como ID3 e KNN. Todos os resultados,
@@ -32,7 +32,7 @@ de Lingua Estrangeira.
 Em caso de dúvidas sugestões ou problema na execução de algum dos códigos fornecidos aqui
 sinta-se livre para abrir uma issue ou contatar diretamente algum dos desenvolvedores
 
-Desenvolvido e mantido por Genicleito Gonçalves(@Genicleito) e Jeferson Lima (@jefersonla)
+Desenvolvido e mantido por Genicleito Gonçalves (@Genicleito) e Jeferson Lima (@jefersonla)
 
 Universidade Federal da Bahia
 
