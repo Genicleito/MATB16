@@ -1,0 +1,5 @@
+Outliers Removidos:  32507 
+Total de instancias:  85467 
+InstÃ¢ncias atuais:  52960 
+Numero colunas:  13 
+Porcentagem de outliers removidos:  61.96544 %
